@@ -19,11 +19,11 @@ function positiveSelection()
   }
 
 
-  $.get("/getmethod/"+selectedText);
+  $.get("/addText/"+selectedText);
 }
 
-function printExamples(){
-  $.get("/getexamples");
+function Learn(){
+  $.get("/learn");
 }
 
 function sayHello(){
