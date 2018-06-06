@@ -1,4 +1,6 @@
 from flask import Flask, render_template
+from nltk import sent_tokenize
+import rnlp
 
 pos_examples_file_src = "files/pos_examples.txt"
 document_src = "files/document.txt"
@@ -23,14 +25,18 @@ def get_pos_examples():
 	pos_examples = [e for e in pos_examples if e != '']
 	return pos_examples
 
-def load_document_from_file(document_src):
-	#Loads the document (as a list of lines) from files directory.
+def document_to_lines(document):
 	lines = []
-	document = open(document_src, 'r')
-	paras = document.read().split('\n')
+	paras = document.split('\n')
 	for para in paras:
-		lines.extend(para.split('.'))
+		# lines.extend(para.split('.'))
+		para_lines = para.split('.')
+		for para_line in para_lines:
+			para_line+="."
+			lines.append(para_line)
 	return lines
+
+
 
 def get_pos_lines(document, examples):
 
@@ -41,6 +47,7 @@ def get_pos_lines(document, examples):
 		4. If the same line appears in the document containing example/s, it will be added again. 
 	'''
 	pos_lines = []
+	temp = []
 	line_index = 0
 	example_index = 0
 
@@ -56,22 +63,73 @@ def get_pos_lines(document, examples):
 					#The next example is also present in previous line or same line repeats
 					example_index+=1
 				else:
-					pos_lines.append(line)
+					temp.append(line)
 					example_index+=1
 			else:
 				line_index+=1
+	for t in temp:
+		pos_line = t.strip()
+		pos_lines.append(pos_line)
 	return pos_lines
+
+
+
+def create_files(corpus, labeled_positive):
+	example_corpus = corpus.split('\n')
+	corpus_string = ""
+	for sentence in example_corpus:
+	    corpus_string += sentence + ' '
+	# Convert 'corpus_string' into a set of predicates.
+	rnlp.converter(corpus_string)
+
+	# Read the contents of sentenceIDs.txt to find the ID numbers.
+	# NOTE: Super not-optimal!!! :
+
+	with open('sentenceIDs.txt', 'r') as f:
+	    sids = f.read().splitlines()
+
+	mapping = {}
+	for line_index in range(len(sids)):
+	    if 'sentenceID:' in sids[line_index]:
+	        mapping[sids[line_index+1].replace('sentence string: ', '')] = sids[line_index].split(' ')[1]
+
+	# Initialize lists of positive and negative examples (which will be written
+	# to files in the end).
+	positive, negative = [], []
+
+	for document in example_corpus:
+
+	    # Tokenize the document into a list of sentences.
+	    sentences = sent_tokenize(document)
+
+	    for s in sentences:
+	        if s in labeled_positive:
+	            # If this current sentence was labelled positve, create predicate.
+	            positive.append('sentenceContainsTarget(' + mapping[s.replace('.', '')] + ').')
+	        else:
+	            negative.append('sentenceContainsTarget(' + mapping[s.replace('.', '')] + ').')
+
+	# Write everything to files.
+	with open('pos.txt', 'w') as f:
+	    for p in positive:
+	        f.write(p + '\n')
+
+	with open('neg.txt', 'w') as f:
+	    for n in negative:
+	        f.write(n + '\n')
+
 
 
 @app.route("/learn/")
 def learn():
 	global document_src
-	document = load_document_from_file(document_src)
+	document = open(document_src, 'r').read()
 	examples = get_pos_examples()
-	print "Identified positive lines : \n"
-	print get_pos_lines(document, examples)
+	line_list = document_to_lines(document)
+	pos_lines = get_pos_lines(line_list,examples)
+	create_files(document,pos_lines)
+	print "Created files from labeled data\n"
 	return ""
-
 
 
 @app.route("/")
