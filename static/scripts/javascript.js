@@ -20,7 +20,6 @@ function positiveSelection()
 
 
   $.get("/getmethod/"+selectedText);
-  alert("Positive example: " + selectedText);
 }
 
 function printExamples(){

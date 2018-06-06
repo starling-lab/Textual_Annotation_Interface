@@ -16,7 +16,8 @@ def get_pos_examples():
 	global pos_examples_file
 	pos_examples_file.close()
 	pos_examples_file = open(pos_examples_file_src, "r")
-	pos_examples = [pos_examples_file.read().split('\n')]
+	pos_examples = pos_examples_file.read().split('\n')
+	pos_examples = [e for e in pos_examples if e != '']
 	return pos_examples
 
 @app.route("/getexamples/")
