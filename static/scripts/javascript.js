@@ -19,12 +19,11 @@ function positiveSelection()
   }
 
 
-  $.get("/getmethod/"+selectedText);
-  alert("Positive example: " + selectedText);
+  $.get("/addText/"+selectedText);
 }
 
-function printExamples(){
-  $.get("/getexamples");
+function Learn(){
+  $.get("/learn");
 }
 
 function sayHello(){
