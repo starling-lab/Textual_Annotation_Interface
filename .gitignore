@@ -1,3 +1,14 @@
+# Files currently generated as part of rnlp.converter
+bk.txt
+blockIDs.txt
+facts.txt
+sentenceIDs.txt
+wordIDs.txt
+
+# Directories used by BoostSRL for learning/inference
+train/
+test/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
