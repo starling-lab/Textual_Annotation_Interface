@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from nltk import sent_tokenize
 import rnlp
+import os
 
 pos_examples_file_src = "files/pos_examples.txt"
 document_src = "files/document.txt"
@@ -128,7 +129,8 @@ def learn():
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
-	print "Created files from labeled data\n"
+	os.system("bash train.sh")
+	print "Training complete!!\n"
 	return ""
 
 
