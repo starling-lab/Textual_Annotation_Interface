@@ -9,36 +9,48 @@
 </head>
 <body>
 
-	<div class = "row"> 
+	<div class = "heading"> 
 		<h2> NLP Annotator </h2>
 
 	</div>
 
-	<div class = "row">
-		<div class = "textarea">
-			<textarea id = "Editor" rows = "30", cols = "60">
-				
-			</textarea>
-		</div>
+	<div class = "main">
+			
+			<div class = "trainInput">
+				<textarea id = "trainEditor" rows = "30", cols = "60">
+				</textarea>
 
-	</div>
-
-
-	<div class = "row">
-		<div class = "buttons1">
-			<div class = "column">
-				<button type = "button" onclick = "positiveSelection()"> Positive </button>
+				<div class = "buttons1">
+					<div class = "button1">
+						<button type = "button" onclick = "positiveSelectionTrain()"> Positive 
+						</button>
+					</div>
+					<div class = "button1">
+						<button type = "button" onclick = "Learn()"> Train
+						</button>
+					</div>
+				</div>
 			</div>
-			<div class = "column">
-				<button type = "button"> Negative </button>
-			</div>
-		</div>
-	</div>
 
-	<div class = "row">
-		<div class = "buttons2">
-			<button type = "button" onclick = "Learn()"> Learn </button>
-		</div>
+			<div class = "testInput">
+				<textarea id = "testEditor" rows = "30", cols = "60">
+				</textarea>
+
+				<div class = "buttons2">
+					<div class = "button2">
+						<button type = "button" onclick = "positiveSelectionTest()"> Positive 
+						</button>
+					</div>
+					<div class = "button2">
+
+						<button type = "button" onclick = "Test()"> Test 
+						</button>
+					</div>
+
+				</div>
+
+			</div>
+
 	</div>
 
 

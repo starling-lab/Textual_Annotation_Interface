@@ -3,25 +3,37 @@ from nltk import sent_tokenize
 import rnlp
 import os
 
-pos_examples_file_src = "files/pos_examples.txt"
-document_src = "files/document.txt"
+train_pos_src = "files/pos_train_examples.txt"
 
-pos_examples_file = open(pos_examples_file_src,'a')
+test_pos_src = "files/pos_test_examples.txt"
+
+train_document_src = "files/document.txt"
+test_document_src = "files/document5.txt"
+
+train_pos_file = open(train_pos_src,'a')
+
+test_pos_file = open(test_pos_src, 'a')
 
 app = Flask(__name__)
 
-@app.route("/addText/<jsdata>")
+@app.route("/addTextTrain/<jsdata>")
 #Change this to post to improve security
 def add_positive_example(jsdata):
-	global pos_examples_file
-	pos_examples_file.write(jsdata+"\n")
+	global train_pos_file
+	train_pos_file.write(jsdata+"\n")
 	return jsdata
 
-def get_pos_examples():
-	global pos_examples_file
-	global pos_examples_file_src
+@app.route("/addTextTest/<jsdata>")
+#Change this to post to improve security
+def add_positive_example_test(jsdata):
+	global test_pos_file
+	test_pos_file.write(jsdata+"\n")
+	return jsdata
+
+
+def get_pos_examples(pos_examples_file, pos_examples_src):
 	pos_examples_file.close()
-	pos_examples_file = open(pos_examples_file_src, "r")
+	pos_examples_file = open(pos_examples_src, "r")
 	pos_examples = pos_examples_file.read().split('\n')
 	pos_examples = [e for e in pos_examples if e != '']
 	return pos_examples
@@ -123,9 +135,11 @@ def create_files(corpus, labeled_positive):
 
 @app.route("/learn/")
 def learn():
-	global document_src
-	document = open(document_src, 'r').read()
-	examples = get_pos_examples()
+	global train_document_src
+	global train_pos_file
+	global train_pos_src
+	document = open(train_document_src, 'r').read()
+	examples = get_pos_examples(train_pos_file, train_pos_src)
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
@@ -134,9 +148,24 @@ def learn():
 	return ""
 
 
+@app.route("/test/")
+def test():
+	global test_document_src
+	global test_pos_file
+	global test_pos_src
+	document = open(test_document_src, 'r').read()
+	examples = get_pos_examples(test_pos_file, test_pos_src)
+	line_list = document_to_lines(document)
+	pos_lines = get_pos_lines(line_list,examples)
+	create_files(document,pos_lines)
+	os.system("bash test.sh")
+	print "Testing done"
+	return ""
+
+
 @app.route("/")
 def index():
    return render_template("index.html")
 
 if __name__ == '__main__':
-   app.run()
+   app.run(debug =True)

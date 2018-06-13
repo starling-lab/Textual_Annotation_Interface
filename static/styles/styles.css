@@ -1,27 +1,68 @@
 .body {
 	padding : 20px;
-	background: #f06d06;
+	background: red;
 }
 
-.column {
-	float : left;
-	width : 50%;
-}
-
-.row {
+.heading {
 	text-align: center;
-	width : 100%;
+}
+.main {
+	display :flex;
+	flex-direction: row;
+	flex-wrap :wrap;
+	justify-content: center;
+
 }
 
-.textarea {
-	margin-bottom: 20px;
+.trainInput {
+]	margin :auto;
+	flex:1;
+	justify-content: center;
+
 }
 
+.trainEditor{
+	
+}
+
+
+.testInput {
+	margin :auto;
+	flex:1;
+	justify-content: center;
+
+
+}
+
+.testEditor {
+
+
+}
 
 .buttons1 {
-	margin-bottom: 40px;
+	display: flex;
+	flex-direction : row;
+	justify-content: center;
+	margin :auto;
+
+}
+
+.button1 {
+	flex:1;
+	flex:1;
+	margin :auto;
 }
 
 .buttons2 {
-	margin-top : 20px;
+	display: flex;
+	flex-direction : row;
+	justify-content: center;
+	margin :auto;
+
+}
+
+.button2 {
+	flex:1;
+	flex:1;
+	margin :auto;
 }
