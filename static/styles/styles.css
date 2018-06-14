@@ -1,68 +1,87 @@
 .body {
+	height:100%;
 	padding : 20px;
-	background: red;
+}
+
+.center {
+	text-align: center;
 }
 
 .heading {
 	text-align: center;
+	background-color: lightgreen;
 }
+
 .main {
 	display :flex;
 	flex-direction: row;
 	flex-wrap :wrap;
 	justify-content: center;
-
+	margin: 10px;
+	background-color: lightblue;
 }
 
 .trainInput {
-]	margin :auto;
+	padding :10px;
+	display :flex;
+	flex-direction: column;
+	margin :auto;
 	flex:1;
 	justify-content: center;
-
 }
 
 .trainEditor{
-	
+	padding :10px;
+	margin :auto;
+	flex:1;
+
 }
 
 
 .testInput {
+	padding :10px;
+	display :flex;
+	flex-direction: column;
 	margin :auto;
 	flex:1;
 	justify-content: center;
 
-
 }
 
 .testEditor {
-
-
+	padding :10px;
+	margin :auto;
+	flex:1;
 }
 
 .buttons1 {
+	padding :10px;
 	display: flex;
 	flex-direction : row;
 	justify-content: center;
 	margin :auto;
+	flex:1;
 
 }
 
 .button1 {
 	flex:1;
-	flex:1;
+	padding :10px;
 	margin :auto;
 }
 
 .buttons2 {
+	padding :10px;
 	display: flex;
 	flex-direction : row;
 	justify-content: center;
 	margin :auto;
+	flex:1;
 
 }
 
 .button2 {
-	flex:1;
+	padding :10px;
 	flex:1;
 	margin :auto;
 }
