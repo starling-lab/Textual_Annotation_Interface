@@ -2,13 +2,26 @@ from flask import Flask, render_template
 from nltk import sent_tokenize
 import rnlp
 import os
+import sys
 
 train_pos_src = "files/pos_train_examples.txt"
-
 test_pos_src = "files/pos_test_examples.txt"
 
-train_document_src = "files/document.txt"
-test_document_src = "files/document5.txt"
+if len(sys.argv) > 1:
+	train_document_src = sys.argv[1]
+	test_document_src = sys.argv[2]
+
+	print "Path of train document: "+sys.argv[1]
+	print "Path of test document: "+sys.argv[2]
+else:
+	print "Please enter path of train document: "
+	train_document_src = raw_input()
+	print "Please enter path of test document: "
+	test_document_src = raw_input()
+
+
+# train_document_src = "files/document.txt"
+# test_document_src = "files/document5.txt"
 
 train_pos_file = open(train_pos_src,'a')
 
@@ -165,7 +178,9 @@ def test():
 
 @app.route("/")
 def index():
-   return render_template("index.html")
+	global train_document_src
+	global test_document_src
+	return render_template("index.html").format(open(train_document_src,"r").read(),open(test_document_src,"r").read())
 
 if __name__ == '__main__':
    app.run(debug =True)
