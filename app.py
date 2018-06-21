@@ -190,10 +190,10 @@ def result():
 	sentences = document_to_lines(open(test_document_src,"r").read())[:-1]
 	for i in range(len(scores)):
 		if scores[i]["neg"] == True:
-			text+="<label style = \"background-color:rgb("+str(int(scores[i]["score"]*255))+",0,0); text-color:white;\">"+sentences[i]+"</label>"
+			text+="<label style = \"background-color:rgb("+str(int(scores[i]["score"]*255))+",0,0); color:white;\">"+sentences[i]+"</label>"
 			# print "background:red "+str(int(scores[i]["score"]*100))+"%;"
 		else:
-			text+="<label style = \"background-color:rgb(0,"+str(int(scores[i]["score"]*255))+",0); text-color:white;\">"+sentences[i]+"</label>"
+			text+="<label style = \"background-color:rgb(0,"+str(int(scores[i]["score"]*255))+",0); color:white;\">"+sentences[i]+"</label>"
 			# print "background:green "+str(int(scores[i]["score"]*100))+"%;"
 	return render_template("result.html").format(text)
 
