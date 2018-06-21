@@ -1,11 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from nltk import sent_tokenize
 import rnlp
 import os
 import sys
 
+
 train_pos_src = "files/pos_train_examples.txt"
 test_pos_src = "files/pos_test_examples.txt"
+
+block_size = 2
 
 if len(sys.argv) > 1:
 	train_document_src = sys.argv[1]
@@ -42,6 +45,41 @@ def add_positive_example_test(jsdata):
 	global test_pos_file
 	test_pos_file.write(jsdata+"\n")
 	return jsdata
+
+def get_scores(file_src):
+	global block_size
+
+	file = open(file_src, "r")
+	sentences = file.read().split('\n')
+	dict_list = []
+	for sentence in sentences:
+		if sentence!= "":
+			dict = {}
+			if sentence[0]=='!':
+				dict["neg"] = True
+			else :
+				dict["neg"] = False
+			terms = sentence.split(' ')
+			dict["score"] = float(terms[1])
+			i1 = terms[0].find('(') + 2
+			i2 = terms[0].find(')')	- 1
+			dict["block_id"] = int(terms[0][i1:i2].split('_')[0])
+			dict["sentence_id"] = int(terms[0][i1:i2].split('_')[1])
+			dict_list.append(dict)
+	#Re-arranging dict list
+	lst = []
+	block_id = 1
+	sentence_id = 1
+
+	for i in range(len(dict_list)):
+		dict = [d for d in dict_list if d["block_id"] == block_id and d["sentence_id"] == sentence_id]
+		lst.append(dict[0])
+		sentence_id +=1
+		if sentence_id>block_size:
+			block_id+=1
+			sentence_id =1
+	
+	return lst	
 
 
 def get_pos_examples(pos_examples_file, pos_examples_src):
@@ -144,7 +182,20 @@ def create_files(corpus, labeled_positive):
 	    for n in negative:
 	        f.write(n + '\n')
 
-
+@app.route("/result", methods = ["POST","GET"])
+def result():
+	global test_document_src
+	text = ""
+	scores = get_scores("test/results_sentenceContainsTarget.db")
+	sentences = document_to_lines(open(test_document_src,"r").read())[:-1]
+	for i in range(len(scores)):
+		if scores[i]["neg"] == True:
+			text+="<label style = \"background-color:rgb("+str(int(scores[i]["score"]*255))+",0,0); text-color:white;\">"+sentences[i]+"</label>"
+			# print "background:red "+str(int(scores[i]["score"]*100))+"%;"
+		else:
+			text+="<label style = \"background-color:rgb(0,"+str(int(scores[i]["score"]*255))+",0); text-color:white;\">"+sentences[i]+"</label>"
+			# print "background:green "+str(int(scores[i]["score"]*100))+"%;"
+	return render_template("result.html").format(text)
 
 @app.route("/learn/")
 def learn():
@@ -172,8 +223,9 @@ def test():
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
 	os.system("bash test.sh")
-	print "Testing done"
+	print "Testing done!!"
 	return ""
+	
 
 
 @app.route("/")
@@ -183,4 +235,4 @@ def index():
 	return render_template("index.html").format(open(train_document_src,"r").read(),open(test_document_src,"r").read())
 
 if __name__ == '__main__':
-   app.run(debug =True)
+	app.run(debug =True)

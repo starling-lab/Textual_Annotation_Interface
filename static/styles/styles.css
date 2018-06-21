@@ -1,6 +1,5 @@
 .body {
 	height:100%;
-	padding : 20px;
 }
 
 .center {
@@ -11,6 +10,7 @@
 	text-align: center;
 	background-color: lightgreen;
 }
+
 
 .main {
 	display :flex;
@@ -85,3 +85,11 @@
 	flex:1;
 	margin :auto;
 }
+
+.output {
+	padding :10px;
+	flex:0.1;
+	margin:auto;
+	justify-content: center;
+}
+
