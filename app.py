@@ -3,6 +3,7 @@ from nltk import sent_tokenize
 import rnlp
 import os
 import sys
+import string
 
 #The code uses GET methods to communicate from JS to app.py. This may be misused. Alternative method of communication can be used to improve security
 
@@ -28,6 +29,7 @@ else:
 train_pos_file = open(train_pos_src,'a')
 
 test_pos_file = open(test_pos_src, 'a')
+
 
 # Helper functions -------------------------
 
@@ -82,11 +84,12 @@ def document_to_lines(document):
 	lines = []
 	paras = document.split('\n')
 	for para in paras:
-		# lines.extend(para.split('.'))
-		para_lines = para.split('.')
-		for para_line in para_lines:
-			para_line+="."
-			lines.append(para_line)
+		if para!="":
+			para_lines = para.split('.')
+			for para_line in para_lines:
+				if para_line!="":
+					para_line+="."
+					lines.append(para_line)
 	return lines
 
 
@@ -125,7 +128,20 @@ def get_pos_lines(document, examples):
 		pos_lines.append(pos_line)
 	return pos_lines
 
+def remove_punctuation(str):
+	s_new = ""
+	for c in str:
+		if c not in string.punctuation:
+			s_new+=c
 
+	return s_new
+
+# def add_full_stop(str_list):
+# 	ret_list = []
+# 	for s in str_list:
+# 		s_new = s+'.'
+# 		ret_list.append(s_new)
+# 	return ret_list
 
 def create_files(corpus, labeled_positive):
 
@@ -156,12 +172,17 @@ def create_files(corpus, labeled_positive):
 	    # Tokenize the document into a list of sentences.
 	    sentences = sent_tokenize(document)
 
+
+	    # sentences = remove_punctuation(sentences)
 	    for s in sentences:
+
 	        if s in labeled_positive:
 	            # If this current sentence was labelled positve, create predicate.
-	            positive.append('sentenceContainsTarget(' + mapping[s.replace('.', '')] + ').')
+	            s_new = remove_punctuation(s)
+	            positive.append('sentenceContainsTarget(' + mapping[s_new.replace('.', '')] + ').')
 	        else:
-	            negative.append('sentenceContainsTarget(' + mapping[s.replace('.', '')] + ').')
+	            s_new = remove_punctuation(s)
+	            negative.append('sentenceContainsTarget(' + mapping[s_new.replace('.', '')] + ').')
 
 	# Write everything to files.
 	with open('pos.txt', 'w') as f:
@@ -171,6 +192,7 @@ def create_files(corpus, labeled_positive):
 	with open('neg.txt', 'w') as f:
 	    for n in negative:
 	        f.write(n + '\n')
+
 
 # End of helper functions -------------------------------------
 
@@ -204,7 +226,8 @@ def result():
 	global test_document_src
 	text = ""
 	scores = get_scores("test/results_sentenceContainsTarget.db")
-	sentences = document_to_lines(open(test_document_src,"r").read())[:-1]
+	sentences = open(test_document_src,"r").read().split('\n')
+	sentences = [s for s in sentences if s!= ""]
 	for i in range(len(scores)):
 		if scores[i]["neg"] == True:
 			text+="<label style = \"background-color:rgb("+str(int(scores[i]["score"]*255))+",0,0); color:white;\">"+sentences[i]+"</label>"
