@@ -25,7 +25,7 @@ else:
 	print "Please enter path of test document: "
 	test_document_src = raw_input()
 
-#Preparing filess
+#Preparing files
 train_pos_file = open(train_pos_src,'a')
 
 test_pos_file = open(test_pos_src, 'a')
@@ -70,6 +70,18 @@ def get_scores(file_src):
 	
 	return lst	
 
+def get_doc_posExamples(examples):
+	corpus = ""
+	for doc_name in os.listdir("./data/docs"):
+		corpus+=open("./data/docs/"+doc_name,"r").read()+'\n'
+	corpus = corpus[:-1]
+	examples_string = ""
+	for file_name in os.listdir("./data/annotations"):
+		examples_string+= "\n"+open("./data/annotations/"+file_name,"r").read()
+	examples.extend(examples_string.split('\n'))
+
+	examples = [e for e in examples if e!=""]
+	return corpus,examples
 
 def get_pos_examples(pos_examples_file, pos_examples_src):
 	#Returns a list of positive examples read from file
@@ -143,6 +155,10 @@ def remove_punctuation(str):
 # 		ret_list.append(s_new)
 # 	return ret_list
 
+def copy_to_db(doc_src, pos_src):
+	os.system("cp "+doc_src+" data/docs/")
+	os.system("cp "+pos_src+" data/annotations/")
+
 def create_files(corpus, labeled_positive):
 
 	example_corpus = corpus.split('\n')
@@ -162,7 +178,6 @@ def create_files(corpus, labeled_positive):
 	for line_index in range(len(sids)):
 	    if 'sentenceID:' in sids[line_index]:
 	        mapping[sids[line_index+1].replace('sentence string: ', '')] = sids[line_index].split(' ')[1]
-
 	# Initialize lists of positive and negative examples (which will be written
 	# to files in the end).
 	positive, negative = [], []
@@ -226,8 +241,10 @@ def result():
 	global test_document_src
 	text = ""
 	scores = get_scores("test/results_sentenceContainsTarget.db")
-	sentences = open(test_document_src,"r").read().split('\n')
+	sentences = document_to_lines(open(test_document_src,"r").read())
 	sentences = [s for s in sentences if s!= ""]
+	print "Sentences and scores:"
+	print sentences,scores
 	for i in range(len(scores)):
 		if scores[i]["neg"] == True:
 			text+="<label style = \"background-color:rgb("+str(int(scores[i]["score"]*255))+",0,0); color:white;\">"+sentences[i]+"</label>"
@@ -243,8 +260,12 @@ def learn():
 	global train_document_src
 	global train_pos_file
 	global train_pos_src
-	document = open(train_document_src, 'r').read()
+	#Copy train document and pos examples file to database/data folder
+	copy_to_db(train_document_src, train_pos_src)
+	# document = open(train_document_src, 'r').read()
 	examples = get_pos_examples(train_pos_file, train_pos_src)
+	document, examples = get_doc_posExamples(examples)
+	print document, examples
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
