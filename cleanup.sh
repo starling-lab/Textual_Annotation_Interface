@@ -1,4 +1,4 @@
-rm files/pos_test_examples.txt
+rm files/pos*
 rm bk.txt
 rm blockIDs.txt
 rm sentenceIDs.txt

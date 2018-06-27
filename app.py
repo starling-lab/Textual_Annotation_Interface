@@ -241,8 +241,6 @@ def result():
 	scores = get_scores("test/results_sentenceContainsTarget.db")
 	sentences = document_to_lines(open(test_document_src,"r").read())
 	sentences = [s for s in sentences if s!= ""]
-	print "Sentences and scores:"
-	print sentences,scores
 	for i in range(len(scores)):
 		if scores[i]["neg"] == True:
 			text+="<label style = \"background-color:rgb("+str(int(scores[i]["score"]*255))+",0,0); color:white;\">"+sentences[i]+"</label>"
@@ -263,7 +261,7 @@ def learn():
 	# document = open(train_document_src, 'r').read()
 	examples = get_pos_examples(train_pos_file, train_pos_src)
 	document, examples = get_doc_posExamples(examples)
-	print document, examples
+	# print document, examples
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
