@@ -1,4 +1,3 @@
-rm files/pos_train_examples.txt
 rm files/pos_test_examples.txt
 rm bk.txt
 rm blockIDs.txt

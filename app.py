@@ -7,7 +7,6 @@ import string
 
 #The code uses GET methods to communicate from JS to app.py. This may be misused. Alternative method of communication can be used to improve security
 
-train_pos_src = "files/pos_train_examples.txt"
 test_pos_src = "files/pos_test_examples.txt"
 
 block_size = 2
@@ -26,6 +25,9 @@ else:
 	test_document_src = raw_input()
 
 #Preparing files
+
+train_pos_src = "files/pos_"+train_document_src.split('/')[1]
+
 train_pos_file = open(train_pos_src,'a')
 
 test_pos_file = open(test_pos_src, 'a')
@@ -155,10 +157,6 @@ def remove_punctuation(str):
 # 		ret_list.append(s_new)
 # 	return ret_list
 
-def copy_to_db(doc_src, pos_src):
-	os.system("cp "+doc_src+" data/docs/")
-	os.system("cp "+pos_src+" data/annotations/")
-
 def create_files(corpus, labeled_positive):
 
 	example_corpus = corpus.split('\n')
@@ -261,7 +259,7 @@ def learn():
 	global train_pos_file
 	global train_pos_src
 	#Copy train document and pos examples file to database/data folder
-	copy_to_db(train_document_src, train_pos_src)
+	os.system("cp "+train_document_src+" data/docs/")
 	# document = open(train_document_src, 'r').read()
 	examples = get_pos_examples(train_pos_file, train_pos_src)
 	document, examples = get_doc_posExamples(examples)
@@ -269,6 +267,7 @@ def learn():
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
+	os.system("cp "+train_pos_src+" data/annotations/")
 	os.system("bash train.sh")
 	print "Training complete!!\n"
 	return ""
