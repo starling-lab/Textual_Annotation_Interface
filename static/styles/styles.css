@@ -93,3 +93,19 @@
 	justify-content: center;
 }
 
+
+.trainFile{
+	padding :10px;
+	display :flex;
+	flex-direction: column;
+	margin :auto;
+	flex:1;
+}
+
+.testFile{
+	padding :10px;
+	display :flex;
+	flex-direction: column;
+	margin :auto;
+	flex:1;
+}

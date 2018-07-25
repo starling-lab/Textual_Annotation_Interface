@@ -1,39 +1,54 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from nltk import sent_tokenize
+from werkzeug import secure_filename
 import rnlp
 import os
 import sys
 import string
 
+
 #The code uses GET methods to communicate from JS to app.py. This may be misused. Alternative method of communication can be used to improve security
 
-test_pos_src = "files/pos_test_examples.txt"
 
 block_size = 2
 
-#Taking train and test documents as commandline or terminal inputs
-if len(sys.argv) > 1:
-	train_document_src = sys.argv[1]
-	test_document_src = sys.argv[2]
 
-	print "Path of train document: "+sys.argv[1]
-	print "Path of test document: "+sys.argv[2]
-else:
-	print "Please enter path of train document: "
-	train_document_src = raw_input()
-	print "Please enter path of test document: "
-	test_document_src = raw_input()
+
+#Taking train and test documents as commandline or terminal inputs
+
+
+# if len(sys.argv) > 1:
+# 	train_document_src = sys.argv[1]
+# 	test_document_src = sys.argv[2]
+
+# 	print "Path of train document: "+sys.argv[1]
+# 	print "Path of test document: "+sys.argv[2]
+# else:
+# 	print "Please enter path of train document: "
+# 	train_document_src = raw_input()
+# 	print "Please enter path of test document: "
+# 	test_document_src = raw_input()
+
+train_document_src = ""
+test_document_src = ""
 
 #Preparing files
 
-train_pos_src = "files/pos_"+train_document_src.split('/')[1]
-
-train_pos_file = open(train_pos_src,'a')
-
-test_pos_file = open(test_pos_src, 'a')
+test_pos_src = "files/pos_test_examples.txt"
+train_pos_file = 0
+test_pos_file = 0
 
 
 # Helper functions -------------------------
+	
+def prepare_files():
+	global train_pos_src, train_pos_file, test_pos_file
+
+	train_pos_src = "files/pos_"+train_document_src.split('/')[1]
+
+	train_pos_file = open(train_pos_src,'a')
+
+	test_pos_file = open(test_pos_src, 'a')
 
 def get_scores(file_src):
 	# Output: Returns the list of dictionaries. Each dictionary corresponds to a sentence in the test doc. Each dict has fields, neg (boolean: is example negative?), score (regression score for match), block_id, sentence_id
@@ -213,10 +228,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-	#Create and render index page
-	global train_document_src
-	global test_document_src
-	return render_template("index.html").format(open(train_document_src,"r").read(),open(test_document_src,"r").read())
+	return render_template("index.html")
 
 @app.route("/addTextTrain/<jsdata>")
 def add_positive_example(jsdata):
@@ -249,6 +261,35 @@ def result():
 			text+="<label style = \"background-color:rgb(0,"+str(int(scores[i]["score"]*255))+",0); color:white;\">"+sentences[i]+"</label>"
 			# print "background:green "+str(int(scores[i]["score"]*100))+"%;"
 	return render_template("result.html").format(text)
+
+@app.route("/filesAdded", methods = ["POST","GET"])
+def filesAdded():
+	#Create and render interface page
+	global train_document_src
+	global test_document_src
+
+	if request.method == 'POST':
+		f = request.files['trainFile']
+		train_document_src = "files/"+secure_filename(f.filename)
+		f.save(train_document_src)
+
+		f = request.files['testFile']
+		test_document_src = "files/"+secure_filename(f.filename)
+		f.save(test_document_src) 
+
+		prepare_files()
+
+
+	return render_template("filesAdded.html")
+
+
+@app.route("/interface/", methods = ["POST","GET"])
+def interface():
+	#Create and render interface page
+	global train_document_src
+	global test_document_src
+
+	return render_template("interface.html").format(open(train_document_src,"r").read(),open(test_document_src,"r").read())
 
 @app.route("/learn/")
 def learn():
