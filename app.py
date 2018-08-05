@@ -8,27 +8,7 @@ import string
 import bash
 
 
-#The code uses GET methods to communicate from JS to app.py. This may be misused. Alternative method of communication can be used to improve security
-
-
 block_size = 2
-
-
-
-#Taking train and test documents as commandline or terminal inputs
-
-
-# if len(sys.argv) > 1:
-# 	train_document_src = sys.argv[1]
-# 	test_document_src = sys.argv[2]
-
-# 	print "Path of train document: "+sys.argv[1]
-# 	print "Path of test document: "+sys.argv[2]
-# else:
-# 	print "Please enter path of train document: "
-# 	train_document_src = raw_input()
-# 	print "Please enter path of test document: "
-# 	test_document_src = raw_input()
 
 train_document_src = ""
 test_document_src = ""
@@ -43,6 +23,7 @@ test_pos_file = 0
 # Helper functions -------------------------
 	
 def prepare_files():
+	#Creates files to be used for adding selected examples from annotator
 	global train_pos_src, train_pos_file, test_pos_file
 
 	train_pos_src = "files/pos_"+train_document_src.split('/')[1]
@@ -52,8 +33,9 @@ def prepare_files():
 	test_pos_file = open(test_pos_src, 'a')
 
 def get_scores(file_src):
-	# Output: Returns the list of dictionaries. Each dictionary corresponds to a sentence in the test doc. Each dict has fields, neg (boolean: is example negative?), score (regression score for match), block_id, sentence_id
 	# Input: Path of the file containing the results (results_sentenceContainsTarget.db)
+	# Output: Returns the list of dictionaries. Each dictionary corresponds to a sentence in the test doc. Each dict has fields, neg (boolean: is example negative?), score (regression score for match), block_id, sentence_id
+	
 	global block_size
 
 	file = open(file_src, "r")
@@ -89,7 +71,9 @@ def get_scores(file_src):
 	return lst	
 
 def get_doc_posExamples(examples):
-
+	#Input: positive examples selected by user for current doc
+	#Returns corpus: String of all documents (stored in data/docs, joined with current)
+	#	all_examples: List of all positive examples (stored in data/annotations, extended with current doc's)
 	corpus = ""
 	for doc_name in os.listdir("./data/docs"):
 		corpus+=open("./data/docs/"+doc_name,"r").read()+'\n'
@@ -113,7 +97,9 @@ def get_pos_examples(pos_examples_file, pos_examples_src):
 	return pos_examples
 
 def document_to_lines(document):
+	# Input: document (corpus as a string)
 	# Returns a list of sentences in a document string (input)
+	#ToDo: Fix -> Decimal numbers can cause problems since doc is split by '.'
 	lines = []
 	paras = document.split('\n')
 	paras = [p for p in paras if p!=""]
@@ -129,7 +115,8 @@ def document_to_lines(document):
 
 
 def get_pos_lines(document, examples):
-
+	
+	#Input: document (list of lines/sentences), examples (phrases selected by user (string))
 	#Returns the lines in document containing the example phrases
 	'''Assumptions: 1. Examples are given in top-down order in the document.
 		2. Multiple examples can be given for a single line in document (The line is added only once)
@@ -140,11 +127,7 @@ def get_pos_lines(document, examples):
 	temp = []
 	line_index = 0
 	example_index = 0
-
-	#Debugging --- 
-	print "Document and examples are: "
-	print document, examples
-	# --- -Debugging --- 
+ 
 
 	while(example_index < len(examples)):
 		while(line_index< len(document)):
@@ -168,6 +151,7 @@ def get_pos_lines(document, examples):
 	return pos_lines
 
 def remove_punctuation(str):
+	#Removes punctuation in string, str
 	s_new = ""
 	for c in str:
 		if c not in string.punctuation:
@@ -175,15 +159,10 @@ def remove_punctuation(str):
 
 	return s_new
 
-# def add_full_stop(str_list):
-# 	ret_list = []
-# 	for s in str_list:
-# 		s_new = s+'.'
-# 		ret_list.append(s_new)
-# 	return ret_list
 
-def create_files(corpus, labeled_positive):
-
+def create_files(corpus, labelled_positive):
+	#Input: corpus (single string of documents combined), labelled_positive (full sentences labelled as positive examples)
+	#Creates files required for training/testing the model
 	example_corpus = corpus.split('\n')
 	corpus_string = ""
 	for sentence in example_corpus:
@@ -214,7 +193,7 @@ def create_files(corpus, labeled_positive):
 	    # sentences = remove_punctuation(sentences)
 	    for s in sentences:
 
-	        if s in labeled_positive:
+	        if s in labelled_positive:
 	            # If this current sentence was labelled positve, create predicate.
 	            s_new = remove_punctuation(s)
 	            positive.append('sentenceContainsTarget(' + mapping[s_new.replace('.', '')] + ').')
@@ -238,6 +217,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
+	#Renders index page with file uploads
 	return render_template("index.html")
 
 @app.route("/addTextTrain/<jsdata>")
@@ -263,18 +243,17 @@ def result():
 	scores = get_scores("test/results_sentenceContainsTarget.db")
 	sentences = document_to_lines(open(test_document_src,"r").read())
 	sentences = [s for s in sentences if s!= ""]
+	#Generates html labels with color-value based on score
 	for i in range(len(scores)):
 		if scores[i]["neg"] == True:
 			text+="<label style = \"background-color:rgb("+str(int(scores[i]["score"]*255))+",0,0); color:white;\">"+sentences[i]+"</label>"
-			# print "background:red "+str(int(scores[i]["score"]*100))+"%;"
 		else:
 			text+="<label style = \"background-color:rgb(0,"+str(int(scores[i]["score"]*255))+",0); color:white;\">"+sentences[i]+"</label>"
-			# print "background:green "+str(int(scores[i]["score"]*100))+"%;"
 	return render_template("result.html").format(text)
 
 @app.route("/filesAdded", methods = ["POST","GET"])
 def filesAdded():
-	#Create and render interface page
+	#Adds files to local "files" directory and renders "files added" page
 	global train_document_src
 	global test_document_src
 
@@ -299,6 +278,7 @@ def interface():
 	global train_document_src
 	global test_document_src
 
+	#Displays file's text in textboxes
 	return render_template("interface.html").format(open(train_document_src,"r").read(),open(test_document_src,"r").read())
 
 @app.route("/learn/")
@@ -307,17 +287,19 @@ def learn():
 	global train_document_src
 	global train_pos_file
 	global train_pos_src
-	#Copy train document and pos examples file to database/data folder
+	#Copy train document data/docs folder
 	bash.store_train_doc(train_document_src)
-	# document = open(train_document_src, 'r').read()
+
+	#Process positive examples and create required files for training
 	examples = get_pos_examples(train_pos_file, train_pos_src)
 	document, examples = get_doc_posExamples(examples)
-
-	# print document, examples
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
+
+	#Copy train positive examples file to data/annotations
 	bash.store_train_pos(train_pos_src)
+	#Train model
 	bash.train()
 	print "Training complete!!\n"
 	return ""
@@ -329,11 +311,15 @@ def test():
 	global test_document_src
 	global test_pos_file
 	global test_pos_src
+
+	#Process positive examples and create files required for testing
 	document = open(test_document_src,'r').read()
 	examples = get_pos_examples(test_pos_file, test_pos_src)
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
+	
+	#Test model
 	bash.test()
 	print "Testing done!!"
 	return ""

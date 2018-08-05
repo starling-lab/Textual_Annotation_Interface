@@ -3,6 +3,7 @@ import platform
 import sys
 
 def store_train_doc(train_document_src):
+	#Stores train document in data/docs
 	if platform.system() == "Linux":
 		os.system("cp "+train_document_src+" data/docs/")
 
@@ -10,6 +11,7 @@ def store_train_doc(train_document_src):
 		os.system("copy "+train_document_src+" data/docs/")
 
 def store_train_pos(train_pos_src):
+	#Stores annotations file for train doc in data/annotations
 	if platform.system() == "Linux":
 		os.system("cp "+train_pos_src+" data/annotations/")
 
@@ -60,6 +62,8 @@ def train():
 	train_cleanup()
 
 def plot_models():
+	#Plots first two models into image directory
+	#NOTE: Problem of inner "" need to be resolved in dot files before plotting
 	os.system("mkdir images")
 	os.system("cd train/models/bRDNs/dotFiles")
 	#Plot first two models
@@ -67,6 +71,7 @@ def plot_models():
 	os.system("dot -Tpng WILLTreeFor_sentenceContainsTarget1.dot -o ../../../../images/1.png")
 
 def cleanup():
+	#Cleans up all unrequired files for re-running the program with new document
 	if platform.system() == "Linux":
 		os.system("rm files/pos*")
 		os.system("rm bk.txt")

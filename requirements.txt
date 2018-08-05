@@ -1,3 +1,4 @@
 rnlp
 nltk
 flask
+werkzeug
