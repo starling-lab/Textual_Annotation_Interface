@@ -88,6 +88,7 @@ def get_scores(file_src):
 	return lst	
 
 def get_doc_posExamples(examples):
+
 	corpus = ""
 	for doc_name in os.listdir("./data/docs"):
 		corpus+=open("./data/docs/"+doc_name,"r").read()+'\n'
@@ -95,10 +96,12 @@ def get_doc_posExamples(examples):
 	examples_string = ""
 	for file_name in os.listdir("./data/annotations"):
 		examples_string+= "\n"+open("./data/annotations/"+file_name,"r").read()
-	examples.extend(examples_string.split('\n'))
+	all_examples = examples_string.split('\n')
+	all_examples.extend(examples)
 
-	examples = [e for e in examples if e!=""]
-	return corpus,examples
+
+	all_examples = [e.strip() for e in all_examples if e!=""]
+	return corpus,all_examples
 
 def get_pos_examples(pos_examples_file, pos_examples_src):
 	#Returns a list of positive examples read from file
@@ -112,13 +115,14 @@ def document_to_lines(document):
 	# Returns a list of sentences in a document string (input)
 	lines = []
 	paras = document.split('\n')
+	paras = [p for p in paras if p!=""]
 	for para in paras:
-		if para!="":
-			para_lines = para.split('.')
-			for para_line in para_lines:
-				if para_line!="":
-					para_line+="."
-					lines.append(para_line)
+		para_lines = para.split('.')
+		for para_line in para_lines:
+			if para_line!="":
+				para_line = para_line.strip()
+				para_line+="."
+				lines.append(para_line)
 	return lines
 
 
@@ -136,13 +140,17 @@ def get_pos_lines(document, examples):
 	line_index = 0
 	example_index = 0
 
+	#Debugging --- 
+	print "Document and examples are: "
+	print document, examples
+	# --- -Debugging --- 
+
 	while(example_index < len(examples)):
 		while(line_index< len(document)):
 			if (example_index >=len(examples)):
 				break
 			example = examples[example_index]
 			line = document[line_index]
-
 			if example in line:
 				if len(pos_lines)>0 and pos_lines[-1] == line:
 					#The next example is also present in previous line or same line repeats
@@ -152,6 +160,7 @@ def get_pos_lines(document, examples):
 					example_index+=1
 			else:
 				line_index+=1
+		example_index+=1
 	for t in temp:
 		pos_line = t.strip()
 		pos_lines.append(pos_line)
@@ -302,6 +311,7 @@ def learn():
 	# document = open(train_document_src, 'r').read()
 	examples = get_pos_examples(train_pos_file, train_pos_src)
 	document, examples = get_doc_posExamples(examples)
+
 	# print document, examples
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
