@@ -14,6 +14,9 @@
 * Function, *learn*, is called for training. All the documents in the data folder and all the positive phrases are combined (along with current document and phrases). The entire set is used for training. Current document and annotations file are stored in data folder.
 * Function, *test*, is called for testing. The current test document and annotations file is used for testing.  
 * *result* function is used to display the results page. Test results are extracted from file, "test/results_sentenceContainsTarget.db". The results are displayed in color-coded format. The sentences of test document which are labeled positive are in green and those labeled negative are red. Higher is the green intensity (RGB format) if the regression score is higher. Red is high if the regression score is more negative. 
+
+## Documentation for util.py
+
 * *create_files* function takes document and positive labels as inputs and converts them into files with predicates for training (using rnlp module).
 * *get_pos_lines* function returns the lines from the document which have part of them labeled positive.
 * *document_to_lines* function breaks down entire document into list of lines (Each line ends with '.').
