@@ -48,9 +48,9 @@ function positiveSelectionTest()
 
 
 function Learn(){
-  $.get("/learn");
+  $.get("/learn/");
 }
 
 function Test(){
-  $.get("/test")
+  $.get("/test/")
 }
