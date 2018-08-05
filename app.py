@@ -15,6 +15,7 @@ test_document_src = ""
 
 #Preparing files
 
+train_pos_src = ""
 test_pos_src = "files/pos_test_examples.txt"
 train_pos_file = 0
 test_pos_file = 0
@@ -74,7 +75,10 @@ def filesAdded():
 		test_document_src = "files/"+secure_filename(f.filename)
 		f.save(test_document_src) 
 
-		prepare_files(train_pos_src, train_pos_file, test_pos_file)
+		#Creating files to be used for adding selected examples from annotator
+		train_pos_src = "files/pos_"+train_document_src.split('/')[1]
+		train_pos_file = open(train_pos_src,'a')
+		test_pos_file = open(test_pos_src, 'a')
 
 
 	return render_template("filesAdded.html")

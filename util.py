@@ -1,9 +1,17 @@
+from flask import Flask, render_template, redirect, url_for, request
+from nltk import sent_tokenize
+from werkzeug import secure_filename
+import rnlp
+import os
+import sys
+import string
+import bash
+from util import *
 
 # Helper functions -------------------------
 	
-def prepare_files(train_pos_src, train_pos_file, test_pos_file):
+def prepare_files(train_document_src, train_pos_file, test_pos_file):
 	#Creates files to be used for adding selected examples from annotator
-	
 
 	train_pos_src = "files/pos_"+train_document_src.split('/')[1]
 
