@@ -4,6 +4,7 @@ import rnlp
 import os
 import sys
 import string
+import bash
 
 #The code uses GET methods to communicate from JS to app.py. This may be misused. Alternative method of communication can be used to improve security
 
@@ -257,7 +258,7 @@ def learn():
 	global train_pos_file
 	global train_pos_src
 	#Copy train document and pos examples file to database/data folder
-	os.system("cp "+train_document_src+" data/docs/")
+	bash.store_train_doc(train_document_src)
 	# document = open(train_document_src, 'r').read()
 	examples = get_pos_examples(train_pos_file, train_pos_src)
 	document, examples = get_doc_posExamples(examples)
@@ -265,8 +266,8 @@ def learn():
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
-	os.system("cp "+train_pos_src+" data/annotations/")
-	os.system("bash train.sh")
+	bash.store_train_pos(train_pos_src)
+	bash.train()
 	print "Training complete!!\n"
 	return ""
 
@@ -277,12 +278,12 @@ def test():
 	global test_document_src
 	global test_pos_file
 	global test_pos_src
-	document = open(test_document_src, 'r').read()
+	document = open(test_document_src,'r').read()
 	examples = get_pos_examples(test_pos_file, test_pos_src)
 	line_list = document_to_lines(document)
 	pos_lines = get_pos_lines(line_list,examples)
 	create_files(document,pos_lines)
-	os.system("bash test.sh")
+	bash.test()
 	print "Testing done!!"
 	return ""
 	

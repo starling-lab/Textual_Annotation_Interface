@@ -7,6 +7,7 @@ rm train.log
 rm train-error.log
 rm test.log
 rm test-error.log
+rm bash.pyc
 
 cp train/train_bk.txt ./
 rm -r train/models
