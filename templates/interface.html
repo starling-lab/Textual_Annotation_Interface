@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Text selection interface</title>
+	<script type = "text/javascript" 
+         src = "{{ url_for('static', filename = 'scripts/javascript.js') }}" ></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+</head>
+<body>
+
+	<div class = "heading"> 
+		<h2> Relations Annotator </h2>
+
+	</div>
+
+	<div class = "main">
+
+			<div class = "trainInput">
+
+				<h3 class = "center" > Training </h3>
+
+				<textarea id = "trainEditor" rows = "30", cols = "60">{}</textarea>
+
+				<div class = "buttons1">
+					<div class = "button1">
+						<button type = "button" onclick = "positiveSelectionTrain()"> Positive 
+						</button>
+					</div>
+					<div class = "button1">
+						<button type = "button" onclick = "Learn()"> Train
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class = "testInput">
+
+				<h3 class = "center" > Testing </h3>
+
+				<textarea id = "testEditor" rows = "30", cols = "60">{}</textarea>
+
+				<div class = "buttons2">
+					<div class = "button2">
+						<button type = "button" onclick = "positiveSelectionTest()"> Positive 
+						</button>
+					</div>
+					<div class = "button2">
+
+						<button type = "button" onclick = "Test()"> Test 
+						</button>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class = "output">
+				<form action = "http://localhost:5000/result" method="POST">
+					<input type = "submit" value = "Get results" />
+
+				</form>
+			</div>
+
+	</div>
+
+
+</body>
+</html>

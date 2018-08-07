@@ -10,21 +10,13 @@
 <body>
 
 	<div class = "heading"> 
-		<h2> File Selection </h2>
+		<h2> Files have been added</h2>
 
 	</div>
 
 	<div class = "main">
-		<form action = "http://localhost:5000/filesAdded" method="POST" enctype = "multipart/form-data">
-			<div class = "trainFile">
-				<h3 class = "center" > Train file </h3>
-				<input type="file" name="trainFile" value="trainFile" id="trainFile">
-			</div>
-			<div class = "testFile">
-				<h3 class = "center" > Test file </h3>
-				<input type="file" name="testFile" value="testFile" id="testFile">
-			</div>
-			<input type = "submit" value = "Add files">
+		<form action = "http://localhost:5000/interface/" method="POST">
+			<input type = "submit" value = "Annotate files">
 		</form>
 </div>
 

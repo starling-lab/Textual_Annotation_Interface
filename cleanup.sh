@@ -3,10 +3,8 @@ rm bk.txt
 rm blockIDs.txt
 rm sentenceIDs.txt
 rm wordIDs.txt
-rm train.log
-rm train-error.log
-rm test.log
-rm test-error.log
+rm *.log
+rm *.pyc
 
 cp train/train_bk.txt ./
 rm -r train/models

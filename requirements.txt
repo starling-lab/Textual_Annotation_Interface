@@ -1,0 +1,4 @@
+rnlp
+nltk
+flask
+werkzeug
