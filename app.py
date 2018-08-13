@@ -1,3 +1,4 @@
+from __future__ import print_function
 from flask import Flask, render_template, redirect, url_for, request
 from nltk import sent_tokenize
 from werkzeug import secure_filename
@@ -113,7 +114,7 @@ def learn():
 	bash.store_train_pos(train_pos_src)
 	#Train model
 	bash.train()
-	print "Training complete!!\n"
+	print("Training complete!!\n")
 	return ""
 
 
@@ -133,7 +134,7 @@ def test():
 	
 	#Test model
 	bash.test()
-	print "Testing done!!"
+	print("Testing done!!")
 	return ""
 	
 
