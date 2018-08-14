@@ -8,4 +8,4 @@ All the previously annotated files are stored and used for the next training.
 ## Usage Instructions:
 * Start Flask server by running "python app.py". (Use python 2.7)
 * Add the files to be used for training and testing. Annotate and see results.
-* Use "bash cleanup.sh" to delete the train, test files for restarting application.
+* Use "python cleanup.py" to delete the train, test files for restarting application.

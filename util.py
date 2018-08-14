@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request
-from nltk import sent_tokenize
+import nltk
 from werkzeug import secure_filename
 import rnlp
 import os
@@ -10,6 +10,11 @@ from util import *
 
 # Helper functions -------------------------
 	
+def load_packages():
+	nltk.download('stopwords')
+	nltk.download('punkt')
+	nltk.download('averaged_perceptron_tagger')
+
 def prepare_files(train_document_src, train_pos_file, test_pos_file):
 	#Creates files to be used for adding selected examples from annotator
 
@@ -156,7 +161,7 @@ def create_files(corpus, labelled_positive):
 	for document in example_corpus:
 
 	    # Tokenize the document into a list of sentences.
-	    sentences = sent_tokenize(document)
+	    sentences = nltk.sent_tokenize(document)
 
 
 	    # sentences = remove_punctuation(sentences)
