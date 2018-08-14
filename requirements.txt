@@ -2,3 +2,4 @@ rnlp
 nltk
 flask
 werkzeug
+tqdm

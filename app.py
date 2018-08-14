@@ -27,6 +27,7 @@ app = Flask(__name__)
 @app.route("/")
 def index():
 	#Renders index page with file uploads
+	load_packages()
 	return render_template("index.html")
 
 @app.route("/addTextTrain/<jsdata>")

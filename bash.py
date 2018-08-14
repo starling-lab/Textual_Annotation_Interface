@@ -5,10 +5,11 @@ import sys
 def store_train_doc(train_document_src):
 	#Stores train document in data/docs
 	if platform.system() == "Linux":
-		os.system("cp "+train_document_src+" data/docs/")
+		os.system("cp "+train_document_src+" data/docs")
 
 	elif platform.system() == "Windows":
-		os.system("copy "+train_document_src+" data/docs/")
+		train_document_src = train_document_src.replace("/", "\\")
+		os.system("copy "+train_document_src+" data\\docs")
 
 def store_train_pos(train_pos_src):
 	#Stores annotations file for train doc in data/annotations
@@ -16,13 +17,16 @@ def store_train_pos(train_pos_src):
 		os.system("cp "+train_pos_src+" data/annotations/")
 
 	elif platform.system() == "Windows":
-		os.system("copy "+train_pos_src+" data/annotations/")
+		train_pos_src = train_pos_src.replace("/", "\\")
+		os.system("copy "+train_pos_src+" data\\annotations")
 
 
 def test():
 	test_setup()
-	# if platform.system() == "Linux":
-	os.system("java -jar v1-0.jar -i -model train/models/ -test test/ -target sentenceContainsTarget -trees 25 -aucJarPath . > test.log 2> test-error.log")
+	if platform.system() == "Linux":
+		os.system("java -jar v1-0.jar -i -model train/models/ -test test/ -target sentenceContainsTarget -trees 25 -aucJarPath . > test.log 2> test-error.log")
+	elif platform.system() == "Windows":
+		os.system("java -jar v1-0.jar -i -model train\\models -test test -target sentenceContainsTarget -trees 25 -aucJarPath .\\")
 
 def test_setup():
 	if platform.system() == "Linux":
@@ -30,9 +34,9 @@ def test_setup():
 		os.system("mv neg.txt test/test_neg.txt")
 		os.system("mv pos.txt test/test_pos.txt")
 	elif platform.system() == "Windows":
-		os.system("move facts.txt test/test_facts.txt")
-		os.system("move neg.txt test/test_neg.txt")
-		os.system("move pos.txt test/test_pos.txt")
+		os.system("move facts.txt test\\test_facts.txt")
+		os.system("move neg.txt test\\test_neg.txt")
+		os.system("move pos.txt test\\test_pos.txt")
 
 def train_setup():
 	if platform.system() == "Linux":
@@ -40,9 +44,9 @@ def train_setup():
 		os.system("mv neg.txt train/train_neg.txt")
 		os.system("mv pos.txt train/train_pos.txt")
 	elif platform.system() == "Windows":
-		os.system("move facts.txt train/train_facts.txt")
-		os.system("move neg.txt train/train_neg.txt")
-		os.system("move pos.txt train/train_pos.txt")
+		os.system("move facts.txt train\\train_facts.txt")
+		os.system("move neg.txt train\\train_neg.txt")
+		os.system("move pos.txt train\\train_pos.txt")
 
 def train_cleanup():
 	if platform.system() == "Linux":
@@ -58,7 +62,10 @@ def train_cleanup():
 
 def train():
 	train_setup()
-	os.system("java -jar v1-0.jar -l -train train -target sentenceContainsTarget -trees 25 > train.log 2> train-error.log")
+	if platform.system() == "Linux":
+		os.system("java -jar v1-0.jar -l -train train -target sentenceContainsTarget -trees 25 > train.log 2> train-error.log")
+	elif platform.system() == "Windows":	
+		os.system("java -jar v1-0.jar -l -train train -target sentenceContainsTarget -trees 25")
 	train_cleanup()
 
 def plot_models():
@@ -93,22 +100,19 @@ def cleanup():
 		os.system("rm test/*")
 		os.system("mv test_bk.txt test/test_bk.txt")
 	elif platform.system() == "Windows":
-		os.system("del files/pos*")
+		os.system("del files\\pos* /q")
 		os.system("del bk.txt")
 		os.system("del blockIDs.txt")
 		os.system("del sentenceIDs.txt")
 		os.system("del wordIDs.txt")
-		os.system("del train.log")
-		os.system("del train-error.log")
-		os.system("del test.log")
-		os.system("del test-error.log")
 
-		os.system("copy train/train_bk.txt ./")
-		os.system("rd -r train/models")
-		os.system("del train/*")
-		os.system("move train_bk.txt train/train_bk.txt")
 
-		os.system("copy test/test_bk.txt ./")
-		os.system("del -r test/AUC")
-		os.system("del test/*")
-		os.system("move test_bk.txt test/test_bk.txt")
+		os.system("copy train\\train_bk.txt .\\")
+		os.system("rmdir train\\models /s /q")
+		os.system("del train\\* /q")
+		os.system("move train_bk.txt train\\train_bk.txt")
+
+		os.system("copy test\\test_bk.txt .\\")
+		os.system("rmdir test\\AUC /s /q")
+		os.system("del test\\* /q")
+		os.system("move test_bk.txt test\\test_bk.txt")
