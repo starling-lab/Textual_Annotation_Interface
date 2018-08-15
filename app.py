@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import unicode_literals
 from flask import Flask, render_template, redirect, url_for, request
 from nltk import sent_tokenize
 from werkzeug import secure_filename

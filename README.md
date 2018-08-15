@@ -6,6 +6,6 @@ Test document can be annotated to check the model's accuracy.
 The predictions of the model (in the results page) shows how correctly (bright green for high, dark green for low) the correct examples were predicted or how well (dark red for low, bright red for high) examples were classified as incorrect.
 All the previously annotated files are stored and used for the next training. 
 ## Usage Instructions:
-* Start Flask server by running "python app.py". (Use python 2.7)
+* Start Flask server by running "python app.py".
 * Upload the files to be used for training and testing, annotate and see results.
 * Use "python cleanup.py" to delete the train and test files for restarting application.
